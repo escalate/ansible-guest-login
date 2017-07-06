@@ -1,0 +1,34 @@
+---
+
+- name: Create directory lightdm.conf.d
+  file:
+    path: "{{item}}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - /etc/lightdm
+    - /etc/lightdm/lightdm.conf.d
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - ansible_distribution_major_version|int >= 11
+  tags:
+    - guest_login
+    - display_manager
+    - lightdm
+
+- name: Manage guest login in LightDM
+  template:
+    src: 50-manage-guest-login.conf
+    dest: /etc/lightdm/lightdm.conf.d/50-manage-guest-login.conf
+    owner: root
+    group: root
+    mode: 0644
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - ansible_distribution_major_version|int >= 15
+  tags:
+    - guest_login
+    - display_manager
+    - lightdm
